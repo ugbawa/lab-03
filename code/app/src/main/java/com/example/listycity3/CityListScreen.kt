@@ -1,5 +1,6 @@
 package com.example.listycity3
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +40,6 @@ fun CityListScreen(
     var newProvinceName by remember { mutableStateOf("") }
     var showAddCityFields by remember { mutableStateOf(false) }
 
-    // Participation exercise: track and edit a selected city
     var selectedCity by remember { mutableStateOf<City?>(null) }
     var editCityName by remember { mutableStateOf("") }
     var editProvinceName by remember { mutableStateOf("") }
@@ -93,7 +94,6 @@ fun CityListScreen(
             }
         }
 
-        // Edit fields — shown only when a city is selected
         selectedCity?.let { city ->
             Row(
                 modifier = Modifier
@@ -135,13 +135,14 @@ fun CityListScreen(
             itemsIndexed(cities) { index, city ->
                 CityRow(
                     city = city,
-                    modifier = Modifier.clickable {
+                    isSelected = (city == selectedCity),
+                    onClick = {
                         selectedCity = city
                         editCityName = city.name
                         editProvinceName = city.province
                     }
                 )
-                if (index < cities.lastIndex) {
+                    if (index < cities.lastIndex) {
                     HorizontalDivider()
                 }
             }
@@ -149,18 +150,19 @@ fun CityListScreen(
     }
 }
 @Composable
-fun CityRow(city: City, modifier: Modifier) {
+fun CityRow(city: City, isSelected: Boolean = false, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 16.dp)
+            .background(if (isSelected) Color.LightGray else Color.Transparent)
+            .clickable { onClick() }
     ) {
         Text(
             text = city.name,
             fontSize = 30.sp,
             modifier = Modifier.weight(1f)
         )
-
         Text(
             text = city.province,
             fontSize = 30.sp,
